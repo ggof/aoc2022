@@ -13,8 +13,6 @@ fun ElfList.asCalories(): ElfCalories = map { it.split("\n").map(String::toInt) 
 fun ElfCalories.sums(): ElfCaloriesSum = map { it.sum() }
 
 fun main() {
-	println("Hello, world!")
-
 	val input = File("day1/input.txt").readText()
 
 	val sums = input.byElf().asCalories().sums()
@@ -25,5 +23,4 @@ fun main() {
 	val top3max = sums.sorted().takeLast(3).sum()
 
 	println("part 2: sum of top 3 wielders is $top3max")
-
 }
