@@ -1,6 +1,5 @@
 package xyz.ggof.aoc2022.day2
 
-import arrow.core.tail
 import xyz.ggof.aoc2022.day2.Choice.*
 import xyz.ggof.aoc2022.day2.Result.*
 import java.io.File
@@ -40,49 +39,47 @@ enum class Choice(val score: Int) {
 	}
 }
 
-object CheatSheet {
-	private val board = arrayOf(
-		Rock.score + Draw.score, Paper.score + Win.score, Scissors.score + Lose.score,
-		Rock.score + Lose.score, Paper.score + Draw.score, Scissors.score + Win.score,
-		Rock.score + Win.score, Paper.score + Lose.score, Scissors.score + Draw.score,
-	)
+private val board = listOf(
+	Rock.score + Draw.score, Paper.score + Win.score, Scissors.score + Lose.score,
+	Rock.score + Lose.score, Paper.score + Draw.score, Scissors.score + Win.score,
+	Rock.score + Win.score, Paper.score + Lose.score, Scissors.score + Draw.score,
+)
 
-	private val playerMove = arrayOf(
-		Scissors, Rock, Paper,
-		Rock, Paper, Scissors,
-		Paper, Scissors, Rock
-	)
+private val playerMove = listOf(
+	Scissors, Rock, Paper,
+	Rock, Paper, Scissors,
+	Paper, Scissors, Rock
+)
 
-	operator fun get(op: Choice, me: Choice): Int = board[(op.ordinal) * 3 + (me.ordinal)]
-	operator fun get(op: Choice, re: Result): Choice = playerMove[(op.ordinal) * 3 + (re.ordinal)]
-}
+infix fun Result.from(op: Choice) = playerMove[op.ordinal * 3 + ordinal]
+infix fun Choice.against(other: Choice) = board[ordinal * 3 + other.ordinal]
 
 typealias Round = Pair<Choice, Choice>
 
-fun Round.score() = CheatSheet[first, second]
+fun Round.score() = first against second
 
-fun part1(s: String): Round {
-	val (op, me) = s.split(" ").map(Choice::ofString)
+fun String.part1(): Round {
+	val (op, me) = split(" ").map(Choice::ofString)
 	return op to me
 }
 
-fun part2(s: String): Round {
-	val (fst, snd) = s.split(" ")
+fun String.part2(): Round {
+	val (fst, snd) = split(" ")
 	val op = Choice.ofString(fst)
-	val me = Result.ofString(snd)
-	return op to CheatSheet[op, me]
+	val re = Result.ofString(snd)
+	return op to (re from op)
 }
 
-fun String.toRounds(mapper: (String) -> Round): List<Round> = split("\n").map { mapper(it) }
+fun Iterable<String>.toRounds(mapper: (String) -> Round): Iterable<Round> = map { mapper(it) }
 
-fun List<Round>.total(): Int = sumOf { it.score() }
+fun Iterable<Round>.total(): Int = sumOf { it.score() }
 
 fun main() {
-	val input = File("input.txt").readText()
+	val input = File("input.txt").readLines()
 
-	val total1 = input.toRounds(::part1).total()
+	val total1 = input.toRounds(String::part1).total()
 	println("part 1: total is $total1")
 
-	val total2 = input.toRounds(::part2).total()
-	println("total for part 2 is $total2")
+	val total2 = input.toRounds(String::part2).total()
+	println("part 2: total is $total2")
 }

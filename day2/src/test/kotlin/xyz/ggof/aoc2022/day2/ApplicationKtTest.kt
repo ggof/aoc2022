@@ -7,15 +7,14 @@ class ApplicationKtTest : StringSpec({
 
 	val input = """A Y
 B X
-C Z"""
-
+C Z""".split("\n").asSequence()
 
 	"should create a round" {
-		"A Y".toRound() shouldBe Pair(Choice.Rock, Choice.Paper)
+		input.first().part1() shouldBe Pair(Choice.Rock, Choice.Paper)
 	}
 
 	"should create all the rounds" {
-		input.toRounds() shouldBe listOf(
+		input.toRounds(String::part1).toList() shouldBe listOf(
 			Choice.Rock to Choice.Paper,
 			Choice.Paper to Choice.Rock,
 			Choice.Scissors to Choice.Scissors
@@ -23,14 +22,14 @@ C Z"""
 	}
 
 	"should calculate score for round" {
-		"A Y".toRound().score() shouldBe 8
+		"A Y".part1().score() shouldBe 8
 	}
 
 	"should calculate total for all rounds" {
-		input.toRounds().total() shouldBe 15
+		input.toRounds(String::part1).total() shouldBe 15
 	}
 
 	"should correctly calculate total for part 2" {
-		input.toRoundsPart2().total() shouldBe 12
+		input.toRounds(String::part2).total() shouldBe 12
 	}
 })

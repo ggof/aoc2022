@@ -32,4 +32,9 @@ allprojects {
 		kotlinOptions.jvmTarget = "17"
 		kotlinOptions.useK2 = true
 	}
+
+
+	tasks.withType<Exec> {
+//		workingDir = projectDir
+	}
 }

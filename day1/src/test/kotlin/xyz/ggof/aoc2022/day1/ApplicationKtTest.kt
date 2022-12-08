@@ -54,7 +54,7 @@ class ApplicationKtTest : StringSpec({
 	}
 
 	"should get the highest amount of calories" {
-		val max = input.byElf().asCalories().sums()
+		val max = input.byElf().asCalories().sums().max()
 
 		max shouldBe 24_000
 	}

@@ -13,7 +13,7 @@ fun ElfList.asCalories(): ElfCalories = map { it.split("\n").map(String::toInt) 
 fun ElfCalories.sums(): ElfCaloriesSum = map { it.sum() }
 
 fun main() {
-	val input = File("day1/input.txt").readText()
+	val input = File("input.txt").readText()
 
 	val sums = input.byElf().asCalories().sums()
 	val max = sums.max()
