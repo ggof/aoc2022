@@ -15,10 +15,6 @@ allprojects {
 	}
 
 	dependencies {
-		implementation(platform("io.arrow-kt:arrow-stack:1.1.2"))
-		implementation("io.arrow-kt:arrow-core")
-		implementation("io.arrow-kt:arrow-optics")
-
 		testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
 		testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
 		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
@@ -31,10 +27,5 @@ allprojects {
 	tasks.withType<KotlinCompile> {
 		kotlinOptions.jvmTarget = "17"
 		kotlinOptions.useK2 = true
-	}
-
-
-	tasks.withType<Exec> {
-//		workingDir = projectDir
 	}
 }
