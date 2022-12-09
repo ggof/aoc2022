@@ -6,9 +6,9 @@ import io.kotest.matchers.shouldBe
 class ApplicationKtTest : StringSpec({
 
 	"should correctly identify strings with all different chars" {
-		"abcdefghijklmnop".allDifferent() shouldBe true
-		"abcdefghijklmnopj".allDifferent() shouldBe false
-		"abjslqo".allDifferent() shouldBe true
+		"abcdefghijklmnop".isMarker() shouldBe true
+		"abcdefghijklmnopj".isMarker() shouldBe false
+		"abjslqo".isMarker() shouldBe true
 	}
 
 	"should get the correct part 1" {
