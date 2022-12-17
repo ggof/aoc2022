@@ -28,11 +28,7 @@ fun List<Pair<Sensor, Pos>>.wrapPair(): Pair<List<Sensor>, List<Pos>> =
 		ss to pp
 	}.let { (f, s) -> f.distinct() to s.distinct() }
 
-fun List<Sensor>.allUnusableAt(depth: Int): Int {
-	val allUnusable = map { it.unusableAt(depth) }
-	val uniqUnusable = allUnusable.flatten().distinct()
-	return uniqUnusable.size
-}
+fun List<Sensor>.allUnusableAt(depth: Int): Int = flatMap { it.unusableAt(depth) }.distinct().count()
 
 fun Sensor.inManhattanDistance(p: Pos) = manhattan(x, y, p.x, p.y) <= m
 
@@ -40,17 +36,18 @@ fun List<Pos>.atDepth(depth: Int): Int = count { it.y == depth }
 
 fun Pair<List<Sensor>, List<Pos>>.part1(depth: Int): Int = first.allUnusableAt(depth) - second.atDepth(depth)
 
-fun List<Sensor>.outside(): List<Pos> = fold(mutableListOf()) { lst, s ->
-	for (m in 0..s.m1) {
-		lst.add(Pos((s.x - s.m1) + m, (s.y) + m)) // top left
-		lst.add(Pos(s.x + m, (s.y + s.m1) - m)) // top right
-		lst.add(Pos((s.x - s.m1) + m, (s.y) - m)) // bottom left
-		lst.add(Pos(s.x + m, (s.y - s.m1) + m)) // bottom right
+fun List<Sensor>.outside(): Sequence<Pos> = sequence {
+	for (s in this@outside) {
+		for (m in 0..s.m1) {
+			yield(Pos((s.x - s.m1) + m, (s.y) + m)) // top left
+			yield(Pos(s.x + m, (s.y + s.m1) - m)) // top right
+			yield(Pos((s.x - s.m1) + m, (s.y) - m)) // bottom left
+			yield(Pos(s.x + m, (s.y - s.m1) + m)) // bottom right
+		}
 	}
-	lst
 }
 
-fun List<Pos>.inside(size: Int) = filter { it.x in 0..size && it.y in 0..size }
+fun Sequence<Pos>.inside(size: Int) = filter { it.x in 0..size && it.y in 0..size }
 
 fun Pos.tuning() = 4000000L * x + y
 
@@ -59,12 +56,12 @@ fun Pair<List<Sensor>, List<Pos>>.part2(size: Int): Long = first
 	.inside(size)
 	.first { p -> first.none { it.inManhattanDistance(p) } }.tuning()
 
-fun String.toPos(drop: Int) = drop(drop).split(",").map { it.trim().drop(2).toInt() }
+fun String.toPos() = """^.*x=(-?\d+), y=(-?\d+)$""".toRegex().find(this)!!.groupValues.drop(1).map { it.toInt() }
 
 fun String.toSensor(): Pair<Sensor, Pos> {
 	val (sensorString, beaconString) = split(":")
-	val (sx, sy) = sensorString.toPos(10)
-	val (bx, by) = beaconString.toPos(22)
+	val (sx, sy) = sensorString.toPos()
+	val (bx, by) = beaconString.toPos()
 	val m = manhattan(sx, sy, bx, by)
 
 	return Sensor(sx, sy, m) to Pos(bx, by)
