@@ -12,29 +12,20 @@ data class Sensor(val x: Int, val y: Int, val m: Int) {
 
 fun manhattan(sx: Int, sy: Int, bx: Int, by: Int): Int = (sx - bx).absoluteValue + (sy - by).absoluteValue
 
-fun Sensor.atDepth(depth: Int): Int = m - (y - depth).absoluteValue
-
 fun Sensor.unusableAt(depth: Int): List<Pos> {
-	val rest = atDepth(depth)
+	val rest = m - (y - depth).absoluteValue
 
 	return if (rest < 1) emptyList()
 	else (-rest..rest).map { Pos(x + it, depth) }
 }
 
-fun List<Pair<Sensor, Pos>>.wrapPair(): Pair<List<Sensor>, List<Pos>> =
-	fold(mutableListOf<Sensor>() to mutableListOf<Pos>()) { (ss, pp), (s, p) ->
-		ss.add(s)
-		pp.add(p)
-		ss to pp
-	}.let { (f, s) -> f.distinct() to s.distinct() }
-
-fun List<Sensor>.allUnusableAt(depth: Int): Int = flatMap { it.unusableAt(depth) }.distinct().count()
+fun List<Sensor>.allUnusableAt(depth: Int): Int = flatMap { it.unusableAt(depth) }.distinct().size
 
 fun Sensor.inManhattanDistance(p: Pos) = manhattan(x, y, p.x, p.y) <= m
 
-fun List<Pos>.atDepth(depth: Int): Int = count { it.y == depth }
+fun Set<Pos>.atDepth(depth: Int): Int = count { it.y == depth }
 
-fun Pair<List<Sensor>, List<Pos>>.part1(depth: Int): Int = first.allUnusableAt(depth) - second.atDepth(depth)
+fun Pair<List<Sensor>, Set<Pos>>.part1(depth: Int): Int = first.allUnusableAt(depth) - second.atDepth(depth)
 
 fun List<Sensor>.outside(): Sequence<Pos> = sequence {
 	for (s in this@outside) {
@@ -51,14 +42,14 @@ fun Sequence<Pos>.inside(size: Int) = filter { it.x in 0..size && it.y in 0..siz
 
 fun Pos.tuning() = 4000000L * x + y
 
-fun Pair<List<Sensor>, List<Pos>>.part2(size: Int): Long = first
+fun Pair<List<Sensor>, Set<Pos>>.part2(size: Int): Long = first
 	.outside()
 	.inside(size)
 	.first { p -> first.none { it.inManhattanDistance(p) } }.tuning()
 
 fun String.toPos() = """^.*x=(-?\d+), y=(-?\d+)$""".toRegex().find(this)!!.groupValues.drop(1).map { it.toInt() }
 
-fun String.toSensor(): Pair<Sensor, Pos> {
+fun String.toSensorAndBeacon(): Pair<Sensor, Pos> {
 	val (sensorString, beaconString) = split(":")
 	val (sx, sy) = sensorString.toPos()
 	val (bx, by) = beaconString.toPos()
@@ -67,7 +58,16 @@ fun String.toSensor(): Pair<Sensor, Pos> {
 	return Sensor(sx, sy, m) to Pos(bx, by)
 }
 
-fun List<String>.toInput() = map { it.toSensor() }.wrapPair()
+fun List<String>.toInput(): Pair<List<Sensor>, Set<Pos>> {
+	val ss = mutableListOf<Sensor>()
+	val pp = hashSetOf<Pos>()
+	for (i in this) {
+		val (s, p) = i.toSensorAndBeacon()
+		ss.add(s)
+		pp.add(p)
+	}
+	return ss to pp
+}
 
 @OptIn(ExperimentalTime::class)
 fun main() {

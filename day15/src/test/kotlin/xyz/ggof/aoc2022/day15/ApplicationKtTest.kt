@@ -22,8 +22,8 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3
 	""".trimIndent().lines()
 
 	"should build all sensors" {
-		input.first().toSensor() shouldBe (Sensor(2, 18, 7) to Pos(-2, 15))
-		input.last().toSensor() shouldBe (Sensor(20, 1, 7) to Pos(15, 3))
+		input.first().toSensorAndBeacon() shouldBe (Sensor(2, 18, 7) to Pos(-2, 15))
+		input.last().toSensorAndBeacon() shouldBe (Sensor(20, 1, 7) to Pos(15, 3))
 	}
 
 	"should find unusable positions" {
