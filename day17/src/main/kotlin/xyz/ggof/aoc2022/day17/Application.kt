@@ -24,7 +24,7 @@ fun Shape.right(full: List<Pos>): Shape {
 	else next
 }
 
-fun List<Pos>.onlyMaxY() = sortedByDescending(Pos::y).take(5000)
+fun List<Pos>.onlyMaxY() = sortedByDescending(Pos::y).take(500)
 
 fun LineH(y: Long): Shape = listOf(Pos(2, y), Pos(3, y), Pos(4, y), Pos(5, y))
 fun Plus(y: Long): Shape = listOf(Pos(2, y + 1), Pos(3, y), Pos(3, y + 1), Pos(3, y + 2), Pos(4, y + 1))
